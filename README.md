@@ -21,6 +21,7 @@
 | title      | str       | 标题                 |                    |
 | plays      | list[str] | 标签                 |                    |
 | text_count | int       | 正文字数             |                    |
+| pict_count | int       | 图片数量             |                    |
 | cmmt_count | int       | 评论数量             |                    |
 | like_count | int       | 点赞数量             |                    |
 | view_count | int       | 浏览数量             |                    |
