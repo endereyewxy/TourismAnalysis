@@ -1,7 +1,7 @@
 import scrapy_sqlitem
 import sqlalchemy.orm
 
-from settings import DATABASE_URL
+from spiders.settings import DATABASE_URL
 
 Base = sqlalchemy.orm.declarative_base()
 
@@ -14,13 +14,14 @@ def get_metadata():
     return sqlalchemy.MetaData(get_engine())
 
 
-class Story(scrapy_sqlitem.SqlItem, metaclass=scrapy_sqlitem.sqlitem.SqlAlchemyItemMeta):
+class StoryItem(scrapy_sqlitem.SqlItem, metaclass=scrapy_sqlitem.sqlitem.SqlAlchemyItemMeta):
     sqlmodel = sqlalchemy.Table('stories', get_metadata(),
 
                                 sqlalchemy.Column(name='stid', type_=sqlalchemy.Integer, primary_key=True),
                                 sqlalchemy.Column(name='cost', type_=sqlalchemy.Integer),
                                 sqlalchemy.Column(name='auth', type_=sqlalchemy.String),
                                 sqlalchemy.Column(name='relp', type_=sqlalchemy.String),
+                                sqlalchemy.Column(name='loct', type_=sqlalchemy.String),
 
                                 sqlalchemy.Column(name='title', type_=sqlalchemy.String),
 
@@ -33,4 +34,4 @@ class Story(scrapy_sqlitem.SqlItem, metaclass=scrapy_sqlitem.sqlitem.SqlAlchemyI
                                 sqlalchemy.Column(name='view_count', type_=sqlalchemy.Integer))
 
 
-Story.sqlmodel.create(bind=get_engine(), checkfirst=True)
+StoryItem.sqlmodel.create(bind=get_engine(), checkfirst=True)
