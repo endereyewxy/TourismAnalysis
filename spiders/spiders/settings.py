@@ -7,6 +7,9 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+# Connection URL for target database (recommended SQLite3).
+DATABASE_URL = 'sqlite:///test.db'
+
 BOT_NAME = 'spiders'
 
 SPIDER_MODULES = ['spiders.spiders']

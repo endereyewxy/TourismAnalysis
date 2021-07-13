@@ -5,9 +5,12 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
+
+from spiders.items import get_engine
 
 
 class SpidersPipeline:
+    # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def process_item(self, item, spider):
+        item.commit_item(get_engine())
         return item
