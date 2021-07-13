@@ -31,3 +31,6 @@ class Story(scrapy_sqlitem.SqlItem, metaclass=scrapy_sqlitem.sqlitem.SqlAlchemyI
                                 sqlalchemy.Column(name='cmmt_count', type_=sqlalchemy.Integer),
                                 sqlalchemy.Column(name='like_count', type_=sqlalchemy.Integer),
                                 sqlalchemy.Column(name='view_count', type_=sqlalchemy.Integer))
+
+
+Story.sqlmodel.create(bind=get_engine(), checkfirst=True)
