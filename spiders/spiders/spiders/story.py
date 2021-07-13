@@ -1,8 +1,9 @@
+import json
 from typing import Optional
 
 import scrapy
 
-from spiders.items import StoryItem
+from spiders.items import StoryItem, HowToItem, VisitItem, CityItem, ScenicItem
 
 
 def int_or_none(s: str) -> Optional[int]:
@@ -16,8 +17,14 @@ def int_or_none(s: str) -> Optional[int]:
 # noinspection PyAbstractClass
 class StorySpider(scrapy.Spider):
     name = 'story'
-
     allowed_domains = ['travel.qunar.com']
+
+    def __init__(self):
+        super().__init__()
+        self.scenic_last_story = 0
+        self.scenic_city_count = 0
+        self.cs_set = set()
+        self.oi_set = set()
 
     def start_requests(self):
         for i in range(1, 2):
@@ -28,8 +35,9 @@ class StorySpider(scrapy.Spider):
         for each in response.xpath("//li/@data-url"):
             stid = each.extract().replace("/youji/", '')
             yield scrapy.Request(url='https://travel.qunar.com/travelbook/note/' + stid, callback=self.parse_story,
-                                 cb_kwargs={'stid': stid})
+                                 cb_kwargs={'stid': int(stid)})
 
+    # noinspection PyMethodMayBeStatic
     def parse_story(self, response, stid):
         story = StoryItem()
 
@@ -59,3 +67,73 @@ class StorySpider(scrapy.Spider):
         story['pict_count'] = len(response.xpath('//div[@class="b_panel_schedule"]//img'))
 
         yield story
+
+        play_ways = response.xpath("//*[@id='js_mainleft']/div[2]/ul/li[5]/p/span[2]//text()").extract()
+        for way in play_ways:
+            if way.strip(' ') != '\xa0':
+                how_to = HowToItem()
+                how_to['hstid'] = stid
+                how_to['h_tag'] = way.strip(' ')
+                yield how_to
+
+        yield scrapy.Request('http://travel.qunar.com/analysis/api/note/poiLink2?bookId=' + str(stid),
+                             callback=self.parse_scenic, cb_kwargs={'stid': stid})
+
+    def parse_scenic(self, response, stid):
+        data = json.loads(response.text)
+        index = 0
+        for item in data["data"]["data"]:
+            name = item["links"][0]["name"]
+            link = item["links"][0]["link"]
+            tag_num = link.split("-")[1]
+            tag = tag_num[0:2]
+            num = tag_num[2:]
+            cb_kwargs = {'stid': stid, 'id_': int(num), 'name': name, 'index': index}
+            if tag == 'cs':
+                if int(num) not in self.cs_set:
+                    self.cs_set.add(int(num))
+                    yield scrapy.Request(link, callback=self.find_prov, cb_kwargs=cb_kwargs)
+            if tag == 'oi':
+                if int(num) not in self.oi_set:
+                    self.oi_set.add(int(num))
+                    yield scrapy.Request(link, callback=self.find_city, cb_kwargs=cb_kwargs)
+            index += 1
+
+    # noinspection PyMethodMayBeStatic
+    def find_prov(self, response, stid, id_, name, index):
+        prov_name = response.xpath('//li[@class="item pull"]/a/@title')[-1].extract()
+        city = CityItem()
+        city['ctid'] = id_
+        city['name'] = name
+        city['prov'] = prov_name
+        yield city
+        visit = VisitItem()
+        visit['vstid'] = stid
+        visit['index'] = index
+        visit['vctid'] = id_
+        yield visit
+
+    def find_city(self, response, stid, id_, name, index):
+        try:
+            city_name = response.xpath('//li[@class="item pull"]/a/@title')[-1].extract()
+            city_id = int(response.xpath('//li[@class="item pull"]/a/@href')[-1].extract().split("-")[1][2:])
+            if city_id not in self.cs_set:
+                self.cs_set.add(city_id)
+                prov_name = response.xpath('//li[@class="item pull"]/a/@title')[-2].extract()
+                city = CityItem()
+                city['ctid'] = city_id
+                city['name'] = city_name
+                city['prov'] = prov_name
+                yield city
+            scenic = ScenicItem()
+            scenic['scid'] = id_
+            scenic['name'] = name
+            scenic['city'] = city_id
+            yield scenic
+            visit = VisitItem()
+            visit['vstid'] = stid
+            visit['index'] = index
+            visit['vscid'] = id_
+            yield visit
+        except IndexError:
+            pass

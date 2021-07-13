@@ -7,9 +7,6 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-# Connection URL for target database (recommended SQLite3).
-DATABASE_URL = 'sqlite:///test.db'
-
 BOT_NAME = 'spiders'
 
 SPIDER_MODULES = ['spiders.spiders']
@@ -27,7 +24,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-# DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 1.5
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
@@ -65,7 +62,7 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'spiders.pipelines.SpidersPipeline': 300,
+    'spiders.pipelines.SpidersPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -88,3 +85,7 @@ ITEM_PIPELINES = {
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+
+FEED_EXPROT_ENCODING = 'UTF-8'
+SQLITE_DB_NAME = 'data.db'
