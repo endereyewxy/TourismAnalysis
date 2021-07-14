@@ -25,11 +25,26 @@ class StorySpider(scrapy.Spider):
         self.scenic_city_count = 0
         self.cs_set = set()
         self.oi_set = set()
+        self.story_set = set()
+        self.page = 2
+        self.month_tag = ["&month=1_2_3", "&month=4_5_6", "&month=7_8_9", "&month=10_11_12"]
+        self.days_tag = ["&days=1_2_3", "&days=4_5_6_7", "&days=8to10", "&days=11to15", "&days=16tom"]
+        self.avg_price_tag = ["&avgPrice=1", "&avgPrice=2", "&avgPrice=3", "&avgPrice=4", "&avgPrice=5"]
+        self.actor_type_tag = ["&actorType=1", "&actorType=2", "&actorType=3", "&actorType=4", "&actorType=5",
+                               "&actorType=6",
+                               "&actorType=7"]
+        self.trip_type_tag = ["", "26", "24", "15", "27", "16", "36", "10", "19", "6", "9", "3", "20", "21", "1", "2",
+                              "4", "5", "7", "8", "11", "12", "13", "17", "18", "14", "22", "23", "39", "29"]
 
     def start_requests(self):
-        for i in range(1, 2):
-            url = 'https://travel.qunar.com/travelbook/list.htm?page={}&order=hot_heat'.format(i)
-            yield scrapy.Request(url=url, callback=self.parse_index)
+        for month in self.month_tag:
+            for days in self.days_tag:
+                for avg_price in self.avg_price_tag:
+                    for i in range(1, self.page + 1):
+                        url = ('https://travel.qunar.com/travelbook/list.htm?page={}&order=hot_heat' + month + days
+                               + avg_price).format(i)
+                        print(url)
+                        yield scrapy.Request(url=url, callback=self.parse_index)
 
     def parse_index(self, response):
         for each in response.xpath("//li/@data-url"):
@@ -40,10 +55,10 @@ class StorySpider(scrapy.Spider):
     # noinspection PyMethodMayBeStatic
     def parse_story(self, response, stid):
         story = StoryItem()
-
         story['stid'] = stid
-        story['loct'] = response.xpath('//p[@class="b_crumb_cont"]/a[@target="_blank"]/text()').extract_first() \
-            .replace('\xa0', '').replace('旅游攻略', '')
+        if response.xpath('//p[@class="b_crumb_cont"]/a[@target="_blank"]/text()').extract_first() is not None:
+            story['loct'] = response.xpath('//p[@class="b_crumb_cont"]/a[@target="_blank"]/text()').extract_first() \
+                .replace('\xa0', '').replace('旅游攻略', '')
         story['title'] = response.xpath('//p[@class="b_crumb_cont"]/span/text()')[-1].extract().replace('\xa0', '')
 
         info = response.xpath('//ul[@class="foreword_list"]')
