@@ -1,16 +1,25 @@
-import json
+import random
+import time
 
 import requests
 
+from spiders.settings import PROXY_URL
+
 
 class ProxyMiddleware:
-    # noinspection PyMethodMayBeStatic,PyUnusedLocal
-    def process_request(self, request, spider):
-        request.meta['download_timeout'] = 10
-        request.meta["proxy"] = 'http://' + json.loads(requests.get('http://127.0.0.1:5010/get/').text)['proxy']
+    proxy = None
+    delay = None
 
-    # noinspection PyMethodMayBeStatic,PyUnusedLocal
+    # noinspection PyUnusedLocal,PyMethodMayBeStatic
+    def process_request(self, request, spider):
+        if ProxyMiddleware.proxy is None or time.time() - ProxyMiddleware.delay > 30:
+            ProxyMiddleware.delay = time.time()
+            ProxyMiddleware.proxy = \
+                ['http://' + proxy['host'] + ':' + proxy['port'] for proxy in requests.get(PROXY_URL).json()['data']]
+        request.meta['download_timeout'] = 10
+        request.meta['proxy'] = random.choice(ProxyMiddleware.proxy)
+
+    # noinspection PyUnusedLocal,PyMethodMayBeStatic
     def process_exception(self, request, exception, spider):
-        requests.get('http://192.168.31.230:5010/delete/?proxy=' + request.meta['proxy'].split("//")[-1])
-        request.meta['proxy'] = 'http://' + json.loads(requests.get('http://127.0.0.1:5010/get/').text)['proxy']
+        request.meta['proxy'] = random.choice(ProxyMiddleware.proxy)
         return request
