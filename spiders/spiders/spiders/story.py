@@ -2,8 +2,9 @@ import json
 from typing import Optional
 
 import scrapy
+import sqlalchemy
 
-from spiders.items import StoryItem, HowToItem, VisitItem, CityItem, ScenicItem
+from spiders.items import get_engine, StoryItem, HowToItem, VisitItem, CityItem, ScenicItem
 
 
 def int_or_none(s: str) -> Optional[int]:
@@ -21,8 +22,10 @@ class StorySpider(scrapy.Spider):
 
     def __init__(self):
         super().__init__()
-        self.cs_set = set()
-        self.oi_set = set()
+        conn = get_engine().connect()
+        self.cs_set = {x for x, in conn.execute(sqlalchemy.select(CityItem.sqlmodel.c.ctid))}
+        self.oi_set = {x for x, in conn.execute(sqlalchemy.select(ScenicItem.sqlmodel.c.scid))}
+        self.st_set = {x for x, in conn.execute(sqlalchemy.select(StoryItem.sqlmodel.c.stid))}
         self.page = 2
         self.month_tag = ["&month=1_2_3", "&month=4_5_6", "&month=7_8_9", "&month=10_11_12"]
         self.days_tag = ["&days=1_2_3", "&days=4_5_6_7", "&days=8to10", "&days=11to15", "&days=16tom"]
