@@ -20,13 +20,13 @@ class StorySpider(scrapy.Spider):
     name = 'story'
     allowed_domains = ['travel.qunar.com']
 
-    def __init__(self):
+    def __init__(self,page):
         super().__init__()
         conn = get_engine().connect()
         self.cs_set = {x for x, in conn.execute(sqlalchemy.select(CityItem.sqlmodel.c.ctid))}
         self.oi_set = {x for x, in conn.execute(sqlalchemy.select(ScenicItem.sqlmodel.c.scid))}
         self.st_set = {x for x, in conn.execute(sqlalchemy.select(StoryItem.sqlmodel.c.stid))}
-        self.page = 2
+        self.page = page
         self.month_tag = ["&month=1_2_3", "&month=4_5_6", "&month=7_8_9", "&month=10_11_12"]
         self.days_tag = ["&days=1_2_3", "&days=4_5_6_7", "&days=8to10", "&days=11to15", "&days=16tom"]
         self.avg_price_tag = ["&avgPrice=1", "&avgPrice=2", "&avgPrice=3", "&avgPrice=4", "&avgPrice=5"]
@@ -35,16 +35,16 @@ class StorySpider(scrapy.Spider):
         for month in self.month_tag:
             for days in self.days_tag:
                 for avg_price in self.avg_price_tag:
-                    for i in range(1, self.page + 1):
-                        url = ('https://travel.qunar.com/travelbook/list.htm?page={}&order=hot_heat' + month + days
-                               + avg_price).format(i)
-                        yield scrapy.Request(url=url, callback=self.parse_index)
+                    url = ('https://travel.qunar.com/travelbook/list.htm?page={}&order=hot_heat' + month + days
+                           + avg_price).format(self.page)
+                    yield scrapy.Request(url=url, callback=self.parse_index)
 
     def parse_index(self, response):
         for each in response.xpath("//li/@data-url"):
             stid = each.extract().replace("/youji/", '')
-            yield scrapy.Request(url='https://travel.qunar.com/travelbook/note/' + stid, callback=self.parse_story,
-                                 cb_kwargs={'stid': int(stid)})
+            if stid not in self.st_set:
+                yield scrapy.Request(url='https://travel.qunar.com/travelbook/note/' + stid, callback=self.parse_story,
+                                     cb_kwargs={'stid': int(stid)})
 
     # noinspection PyMethodMayBeStatic
     def parse_story(self, response, stid):
