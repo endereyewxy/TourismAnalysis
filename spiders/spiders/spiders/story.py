@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Optional
 
 import scrapy
@@ -27,6 +28,8 @@ class StorySpider(scrapy.Spider):
         self.oi_set = {x for x, in conn.execute(sqlalchemy.select(ScenicItem.sqlmodel.c.scid))}
         self.st_set = {x for x, in conn.execute(sqlalchemy.select(StoryItem.sqlmodel.c.stid))}
         self.page = page
+        logging.info('Working on page %s, collected %d cities, %d scenics and %d stories previously'
+                     % (page, len(self.cs_set), len(self.oi_set), len(self.st_set)))
         self.month_tag = ["&month=1_2_3", "&month=4_5_6", "&month=7_8_9", "&month=10_11_12"]
         self.days_tag = ["&days=1_2_3", "&days=4_5_6_7", "&days=8to10", "&days=11to15", "&days=16tom"]
         self.avg_price_tag = ["&avgPrice=1", "&avgPrice=2", "&avgPrice=3", "&avgPrice=4", "&avgPrice=5"]
@@ -57,36 +60,39 @@ class StorySpider(scrapy.Spider):
 
         info = response.xpath('//ul[@class="foreword_list"]')
         story['date_start'] = info.xpath('./li[@class="f_item when"]/p/span[@class="data"]/text()').extract_first()
-        story['date_count'] = int_or_none(
-            info.xpath('./li[@class="f_item howlong"]/p/span[@class="data"]/text()').extract_first())
-        story['relp'] = info.xpath('./li[@class="f_item who"]/p/span[@class="data"]/text()').extract_first()
-        story['cost'] = int_or_none(
-            info.xpath('./li[@class="f_item howmuch"]/p/span[@class="data"]/text()').extract_first())
+        date_count = info.xpath('./li[@class="f_item howlong"]/p/span[@class="data"]/text()').extract_first()
+        if date_count == '99+':
+            logging.warning('99+ days!')
+        else:
+            story['date_count'] = int_or_none(date_count)
+            story['relp'] = info.xpath('./li[@class="f_item who"]/p/span[@class="data"]/text()').extract_first()
+            story['cost'] = int_or_none(
+                info.xpath('./li[@class="f_item howmuch"]/p/span[@class="data"]/text()').extract_first())
 
-        story['auth'] = response.xpath('//div[@class="e_line2"]/ul/li/a/text()').extract_first()
-        story['cmmt_count'] = int_or_none(
-            response.xpath('//li[@class="nav_item comment"]//span[@class="num"]/text()').extract_first())
-        story['like_count'] = int_or_none(
-            response.xpath('//li[@class="nav_item like"]//span[@class="num"]/text()').extract_first())
+            story['auth'] = response.xpath('//div[@class="e_line2"]/ul/li/a/text()').extract_first()
+            story['cmmt_count'] = int_or_none(
+                response.xpath('//li[@class="nav_item comment"]//span[@class="num"]/text()').extract_first())
+            story['like_count'] = int_or_none(
+                response.xpath('//li[@class="nav_item like"]//span[@class="num"]/text()').extract_first())
 
-        story['view_count'] = int_or_none(response.xpath('//span[@class="view_count"]/text()').extract_first())
+            story['view_count'] = int_or_none(response.xpath('//span[@class="view_count"]/text()').extract_first())
 
-        story['text_count'] = len(
-            response.xpath('//div[@id="main_box"][@class="main_box clrfix"]').xpath('string(.)').extract_first())
-        story['pict_count'] = len(response.xpath('//div[@class="b_panel_schedule"]//img'))
+            story['text_count'] = len(
+                response.xpath('//div[@id="main_box"][@class="main_box clrfix"]').xpath('string(.)').extract_first())
+            story['pict_count'] = len(response.xpath('//div[@class="b_panel_schedule"]//img'))
 
-        yield story
+            yield story
 
-        play_ways = response.xpath("//*[@id='js_mainleft']/div[2]/ul/li[5]/p/span[2]//text()").extract()
-        for way in play_ways:
-            if way.strip(' ') != '\xa0':
-                how_to = HowToItem()
-                how_to['hstid'] = stid
-                how_to['h_tag'] = way.strip(' ')
-                yield how_to
+            play_ways = response.xpath("//*[@id='js_mainleft']/div[2]/ul/li[5]/p/span[2]//text()").extract()
+            for way in play_ways:
+                if way.strip(' ') != '\xa0':
+                    how_to = HowToItem()
+                    how_to['hstid'] = stid
+                    how_to['h_tag'] = way.strip(' ')
+                    yield how_to
 
-        yield scrapy.Request('http://travel.qunar.com/analysis/api/note/poiLink2?bookId=' + str(stid),
-                             callback=self.parse_scenic, cb_kwargs={'stid': stid})
+            yield scrapy.Request('http://travel.qunar.com/analysis/api/note/poiLink2?bookId=' + str(stid),
+                                 callback=self.parse_scenic, cb_kwargs={'stid': stid})
 
     def parse_scenic(self, response, stid):
         data = json.loads(response.text)
