@@ -20,7 +20,7 @@ class StorySpider(scrapy.Spider):
     name = 'story'
     allowed_domains = ['travel.qunar.com']
 
-    def __init__(self,page):
+    def __init__(self, page):
         super().__init__()
         conn = get_engine().connect()
         self.cs_set = {x for x, in conn.execute(sqlalchemy.select(CityItem.sqlmodel.c.ctid))}
@@ -41,10 +41,10 @@ class StorySpider(scrapy.Spider):
 
     def parse_index(self, response):
         for each in response.xpath("//li/@data-url"):
-            stid = each.extract().replace("/youji/", '')
+            stid = int(each.extract().replace("/youji/", ''))
             if stid not in self.st_set:
-                yield scrapy.Request(url='https://travel.qunar.com/travelbook/note/' + stid, callback=self.parse_story,
-                                     cb_kwargs={'stid': int(stid)})
+                yield scrapy.Request(url='https://travel.qunar.com/travelbook/note/' + str(stid),
+                                     callback=self.parse_story, cb_kwargs={'stid': stid})
 
     # noinspection PyMethodMayBeStatic
     def parse_story(self, response, stid):

@@ -1,5 +1,6 @@
 import random
 import time
+import urllib.parse
 
 import requests
 
@@ -12,6 +13,8 @@ class ProxyMiddleware:
 
     # noinspection PyUnusedLocal,PyMethodMayBeStatic
     def process_request(self, request, spider):
+        if 'captcha' in request.url:
+            return request.replace(url=urllib.parse.unquote(request.url.split('from=')[-1]))
         if ProxyMiddleware.proxy is None or time.time() - ProxyMiddleware.delay > 30:
             ProxyMiddleware.delay = time.time()
             ProxyMiddleware.proxy = \
