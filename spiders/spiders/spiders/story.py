@@ -43,7 +43,6 @@ class StorySpider(scrapy.Spider):
                     for i in range(1, self.page + 1):
                         url = ('https://travel.qunar.com/travelbook/list.htm?page={}&order=hot_heat' + month + days
                                + avg_price).format(i)
-                        print(url)
                         yield scrapy.Request(url=url, callback=self.parse_index)
 
     def parse_index(self, response):
