@@ -15,6 +15,11 @@ def handle_htm(htm: str):
 @app.route('/api/<api>')
 def handle_api(api: str):
     try:
-        return {'error_code': 100, 'data': [row.asDict() for row in getattr(D, api)]}
+        data = [row.asDict() for row in getattr(D, api)]
+        if api == 'play_way_percent_topn':
+            data = data[:int(flask.request.args.get('num', ''))]
+        return {'error_code': 100, 'data': data}
     except AttributeError:
         flask.abort(404)
+    except ValueError:
+        return {'error_code': 101}

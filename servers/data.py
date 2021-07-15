@@ -1,12 +1,14 @@
 from pyspark.sql import SparkSession, functions
 
-import settings
-
 
 class D:
     month_avg_people = None
 
     relp_avg_cost = None
+
+    relp_story_num = None
+
+    play_way_percent_topn = None
 
 
 def update_raw_database(database: str):
@@ -42,6 +44,23 @@ def update_raw_database(database: str):
         .groupBy('relp') \
         .avg('cost') \
         .withColumnRenamed('avg(cost)', 'avg_cost') \
+        .collect()
+
+    D.relp_story_num = stories.select('relp') \
+        .groupBy('relp') \
+        .count() \
+        .withColumnRenamed('count', 'story_num') \
+        .collect()
+
+    D.play_way_percent_topn = how_to.select('h_tag') \
+        .groupBy('h_tag') \
+        .count() \
+        .withColumnRenamed('h_tag', 'play_way') \
+        .withColumnRenamed('count', 'percent')
+    D.play_way_percent_topn = D.play_way_percent_topn \
+        .withColumn('percent', functions.round(D.play_way_percent_topn.percent / stories.count() * 100).cast('int'))
+    D.play_way_percent_topn = D.play_way_percent_topn \
+        .orderBy(D.play_way_percent_topn.percent.desc()) \
         .collect()
 
     spark.stop()

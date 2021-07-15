@@ -205,7 +205,9 @@
 
 ##### 请求URL
 - ` /api/play_way_percent_topn/ `
+
 ##### 请求方式
+
 - GET 
 
 ##### 参数
@@ -322,5 +324,4 @@
 | longitude | float  | 景点经度 |
 | latitude  | float  | 景点纬度 |
 | hot       | float  | 景点热度 |
-
 
