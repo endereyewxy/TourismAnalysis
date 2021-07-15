@@ -10,8 +10,7 @@ class D:
 
 
 def update_raw_database(database: str):
-    spark = SparkSession.builder \
-        .master(settings.SPARK_URL).config('spark.jars.packages', 'org.xerial:sqlite-jdbc:3.34.0').getOrCreate()
+    spark = SparkSession.builder.config('spark.jars.packages', 'org.xerial:sqlite-jdbc:3.34.0').getOrCreate()
 
     loader = spark.read.format('jdbc')
 
