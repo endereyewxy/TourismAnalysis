@@ -6,7 +6,7 @@ var option;
 
 
 
-$.getJSON('/data/flights.json', function(data) {
+$.getJSON('/static/data/flights.json', function(data) {
 
     function getAirportCoord(idx) {
         return [data.airports[idx][3], data.airports[idx][4]];

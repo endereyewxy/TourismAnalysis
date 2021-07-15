@@ -1,60 +1,60 @@
 <!DOCTYPE html>
 <html lang="zh_CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Document</title>
-    <link rel="stylesheet" href="/static/css/index.css" />
-  </head>
+    <link rel="stylesheet" href="/static/css/index.css"/>
+</head>
 
-  <body>
-    <header>
-      <h1><span style="font-size:25px;cursor:pointer" onclick="openNav()">&#9776;</span>
+<body>
+<header>
+    <h1><span style="font-size:25px;cursor:pointer" onclick="openNav()">&#9776;</span>
         旅游数据分析</h1>
-    </header>
-    <div id="mySidenav" class="sidenav">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <a href="lines3d.html">首页</a>
-      <a href="#">旅游数据分析</a>
-      <a href="hot.html">热门景点</a>
-      <a href="rank.html">人均消费变化率排行榜</a>
+</header>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="lines3d.html">首页</a>
+    <a href="#">旅游数据分析</a>
+    <a href="hot.html">热门景点</a>
+    <a href="rank.html">人均消费变化率排行榜</a>
+</div>
+
+
+<div id="container">
+    <div class="map">
+        <div class="chart" style="width: 66vw;height: 8.4rem;"></div>
     </div>
-
-
-    <div id="container">
-        <div class="map">
-          <div class="chart" style="width: 66vw;height: 8.4rem;"></div>
-        </div>
-        <div class="panel bar">
-          <h2>
+    <div class="panel bar">
+        <h2>
             柱状图-人均消费
-          </h2>
-          <div class="chart"></div>
-        </div>
-        <div class="panel line">
-          <h2>散点图-行程时长</h2>
-          <div class="chart"></div>
-        </div>
-        <div class="panel pie">
-          <h2>饼形图-人物</h2>
-          <div class="chart"></div>
-        </div>
-        <div class="panel bar1">
-          <h2>柱状图-游玩方式</h2>
-          <div class="chart"></div>
-        </div>
-        <div class="panel line1">
-          <h2>折线图-出行人数</h2>
-          <div class="chart"></div>
-        </div>
+        </h2>
+        <div class="chart"></div>
     </div>
+    <div class="panel line">
+        <h2>散点图-行程时长</h2>
+        <div class="chart"></div>
+    </div>
+    <div class="panel pie">
+        <h2>饼形图-人物</h2>
+        <div class="chart"></div>
+    </div>
+    <div class="panel bar1">
+        <h2>柱状图-游玩方式</h2>
+        <div class="chart"></div>
+    </div>
+    <div class="panel line1">
+        <h2>折线图-出行人数</h2>
+        <div class="chart"></div>
+    </div>
+</div>
 
-    <script src="/static/js/flexible.js"></script>
-    <script src="/static/js/jquery.js"></script>
-    <script src="/static/js/echarts.min.js"></script>
-    <script src="/static/js/index.js"></script>
-    <script src="/static/js/china.js"></script>
-    <script src="/static/js/myMap.js"></script>
-    <script src="/static/js/t.js"></script>
-  </body>
+<script src="/static/js/flexible.js"></script>
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/echarts.min.js"></script>
+<script src="/static/js/index.js"></script>
+<script src="/static/js/china.js"></script>
+<script src="/static/js/myMap.js"></script>
+<script src="/static/js/t.js"></script>
+</body>
 </html>
