@@ -1,1 +1,6 @@
 spiders/venv
+servers/venv
+
+spiders/.idea
+servers/.idea
+
