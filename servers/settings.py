@@ -1,1 +1,1 @@
-SPARK_URL = 'spark://192.168.19.129:7077'
+SPARK_URL = None
