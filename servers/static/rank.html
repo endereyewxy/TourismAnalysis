@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/rank.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1><span style="font-size:25px;cursor:pointer" onclick="openNav()">&#9776;</span>
+        旅游数据分析</h1>
+    </header>
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="lines3d.html">首页</a>
+      <a href="#">旅游数据分析</a>
+      <a href="hot.html">热门景点</a>
+      <a href="rank.html">人均消费变化率排行榜</a>
+    </div>
+    
+
+    <div id="container">
+        <div class="map">
+          <div class="chart" style="width: 80vw;height:9rem;"></div>
+        </div>
+    </div>
+
+    <script src="js/flexible.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/china.js"></script>
+    <script src="js/rank.js"></script>
+    <script src="js/t.js"></script>
+  </body>
+</html>

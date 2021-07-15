@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <script src="js/echarts.min.js"></script>
+        <link rel="stylesheet" href="css/hot.css" />
+    </head>
+    <body>
+        <header>
+            <h1><span style="font-size:25px;cursor:pointer" onclick="openNav()">&#9776;</span>
+              旅游数据分析</h1>
+          </header>
+          <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="lines3d.html">首页</a>
+            <a href="#">旅游数据分析</a>
+            <a href="hot.html">热门景点</a>
+            <a href="rank.html">人均消费变化率排行榜</a>
+          </div>
+    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="container">
+        <div class="map">
+          <div class="chart" >
+            <div id = "main10" style="width: 1124px;height:600px;">>
+            </div>
+        </div>
+        </div>
+    </div>
+        <script src="js/jquery.js"></script>
+        <script src="js/bmap.js"></script>
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RsIgaDtmcQ63FTIE4Z0XOAHC6z085w1R"></script>
+        <script src="js/hot.js"></script>
+        <script src="js/t.js"></script>
+        <script src="js/flexible.js"></script>
+    </body>
+</html>
