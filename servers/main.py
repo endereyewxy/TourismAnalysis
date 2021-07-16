@@ -44,6 +44,11 @@ def handle_api(api: str):
             for obj in data:
                 new_data.setdefault(obj['year'], []).append({'name': obj['prov'], 'avg_cost': obj['avg(cost)']})
             data = [{'year': year, 'prov': prov} for year, prov in new_data.items()]
+        if api == 'quarter_days':
+            quarters = {days: [0, 0, 0, 0] for days in range(1, 6)}
+            for obj in data:
+                quarters[obj['days']][obj['quarter']] += obj['count']
+            data = [{'days': key, 'quarter_list': val} for key, val in quarters.items()]
         return {'error_code': 100, 'data': data}
     except AttributeError:
         flask.abort(404)

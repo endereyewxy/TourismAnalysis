@@ -46,6 +46,8 @@ class D:
 
     city_everypeolple_avg_cost = None
 
+    quarter_days = None
+
 
 def update_raw_database(database: str):
     spark = SparkSession.builder.config('spark.jars.packages', 'org.xerial:sqlite-jdbc:3.34.0').getOrCreate()
@@ -121,6 +123,21 @@ def update_raw_database(database: str):
         .withColumnRenamed('date_start_y', 'year') \
         .orderBy(functions.col('avg(cost)').desc()) \
         .withColumn('avg(cost)', functions.bround(functions.col('avg(cost)'), scale=2)) \
+        .collect()
+
+    D.quarter_days = stories.select('date_count', 'date_start_m') \
+        .withColumn('days', functions \
+                    .when(functions.col('date_count') <= 3, 1) \
+                    .when(functions.col('date_count') <= 7, 2) \
+                    .when(functions.col('date_count') <= 10, 3) \
+                    .when(functions.col('date_count') <= 15, 4).otherwise(5)) \
+        .withColumn('quarter', functions \
+                    .when(functions.col('date_start_m') <= 3, 0) \
+                    .when(functions.col('date_start_m') <= 6, 1) \
+                    .when(functions.col('date_start_m') <= 9, 2).otherwise(3)) \
+        .select('days', 'quarter') \
+        .groupBy('days', 'quarter') \
+        .count() \
         .collect()
 
     spark.stop()
