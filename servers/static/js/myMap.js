@@ -1,14 +1,7 @@
 (function(){
-    var mapName = 'china'
+    var mapName = 'china';
 
-    var geoCoordMap = {
-    };
-    var year = ["2019", "2020", "2021"];  
-    var mapData = [
-        [],
-        [],
-        [],
-       ];
+    var geoCoordMap = {};
 
     /*获取地图数据*/
     var myChart = echarts.init(document.querySelector(".map .chart"));
@@ -23,31 +16,62 @@
     
     });
  
-    for (var key in geoCoordMap) {
-        mapData[0].push({
-            "year": '2019',
-            "name": key,
-            "value": randomNum(0, 200)
-        });
-        mapData[1].push({
-            "year": '2020',
-            "name": key,
-            "value": randomNum(0, 200)
-        });
-        mapData[2].push({
-            "year": '2021',
-            "name": key,
-            "value": randomNum(0, 200)
-        });
-    }
+    // for (var key in geoCoordMap) {
+    //     console.log(key);
+    //     mapData[0].push({
+    //         "year": '2019',
+    //         "name": key,
+    //         "value": randomNum(0, 200)
+    //     });
+    //     mapData[1].push({
+    //         "year": '2020',
+    //         "name": key,
+    //         "value": randomNum(0, 200)
+    //     });
+    //     mapData[2].push({
+    //         "year": '2021',
+    //         "name": key,
+    //         "value": randomNum(0, 200)
+    //     });
+    // }
 
-    //console.log(data)
-    var max = 480,
-        min = 9; // todo 
-    var maxSize4Pin = 100,
-        minSize4Pin = 20;
-
-   
+    $.getJSON('/api/prov_hot', function(scatterdata) {
+        var year = ["2019", "2020", "2021"];  
+        var mapData = [
+            [],
+            [],
+            [],
+           ];
+           for (var key in geoCoordMap) {
+            for(var pn in scatterdata.data[0].prov){
+                if(key==scatterdata.data[0].prov[pn].name){
+                    mapData[0].push({
+                        "year": '2019',
+                        "name": key,
+                        "value":scatterdata.data[0].prov[pn].hot
+                    });                    
+                }
+            }
+            for(var pn in scatterdata.data[1].prov){
+                if(key==scatterdata.data[1].prov[pn].name){
+                    mapData[1].push({
+                        "year": '2020',
+                        "name": key,
+                        "value":scatterdata.data[1].prov[pn].hot
+                    });                    
+                }
+            }
+            for(var pn in scatterdata.data[2].prov){
+                if(key==scatterdata.data[2].prov[pn].name){
+                    mapData[2].push({
+                        "year": '2021',
+                        "name": key,
+                        "value":scatterdata.data[2].prov[pn].hot
+                    });                    
+                }
+            }
+        }
+        console.log(mapData);
     var convertData = function(data) {
         var res = [];
         for (var i = 0; i < data.length; i++) {
@@ -117,22 +141,6 @@
                 },
             },
              
-              //侧边
-              visualMap: {
-                  show: true,
-                  min: 0,
-                  max: 200,
-                  left: '10%',
-                  top: 'bottom',
-                  calculable: true,
-                  textStyle: {
-                    color: '#24CFF4'
-                },
-                  seriesIndex: [1],
-                  inRange: {
-                      color: ['#04387b', '#467bc0'] // 蓝绿
-                  }
-              },
               geo: {
                   show: true,
                   map: mapName,
@@ -161,14 +169,31 @@
     for(var n = 0; n < year.length; n++){
         console.log(mapData[n]);
         optionXyMap01.options.push({
-            series: [{
+              visualMap: {
+                  show: true,
+                  min: 0,
+                  max: scatterdata.data[n].max,
+                  left: '10%',
+                  top: 'bottom',
+                  calculable: true,
+                  textStyle: {
+                    color: '#24CFF4'
+                },
+                  seriesIndex: [1],
+                  inRange: {
+                      color: ['#04387b', '#467bc0'] // 蓝绿
+                  }
+              },
+            series: [
+                {
                 name: '散点',
                 type: 'scatter',
                 coordinateSystem: 'geo',
                 data: convertData(mapData[n]),
-                symbolSize: function(val) {
-                    return val[2] / 10;
-                },
+                symbolSize:function(n) {return  function(val) {
+                    console.log(n);
+                    return val[2] / scatterdata.data[n].max *30;
+                }}(n),
                 label: {
                     normal: {
                         formatter: '{b}',
@@ -228,9 +253,10 @@
                 data: convertData(mapData[n].sort(function(a, b) {
                     return b.value - a.value;
                 }).slice(0, 5)),
-                symbolSize: function(val) {
-                    return val[2] / 10;
-                },
+                symbolSize:function(n) {return  function(val) {
+                    console.log(n);
+                    return val[2] / scatterdata.data[n].max *20;
+                }}(n),
                 showEffectOn: 'render',
                 rippleEffect: {
                     brushType: 'stroke'
@@ -256,21 +282,9 @@
         })
     }
     myChart.setOption(optionXyMap01);
+    });
+
     window.addEventListener("resize", function() {
     myChart.resize();
     });
-  })();
-
-function randomNum(minNum, maxNum) {
-    switch (arguments.length) {
-        case 1:
-            return parseInt(Math.random() * minNum + 1, 10);
-            break;
-        case 2:
-            return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
-            break;
-        default:
-            return 0;
-            break;
-    }
-}
+})();

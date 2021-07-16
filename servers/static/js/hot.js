@@ -1,5 +1,5 @@
 var myChart = echarts.init(document.getElementById('main10'), 'dark');
-var uploadedDataURL ="data/diturelitu.json";
+var uploadedDataURL ="/static/data/diturelitu.json";
 var last_point = [0, 0];
  var t_pos = {
      left: 0,

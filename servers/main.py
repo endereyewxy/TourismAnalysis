@@ -4,7 +4,7 @@ from data import update_raw_database, D
 
 app = flask.Flask('tourism-analysis')
 
-update_raw_database('/home/endereye/Workspace/TourismAnalysis/spiders/db/data.db.050')
+update_raw_database('data.db.050')
 
 
 @app.route('/<htm>.html')

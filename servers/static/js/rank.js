@@ -11,7 +11,9 @@ var data =[
     [15.26,1.31,16.68,10331,91580,1909,40469,67490,1765,36982,15371,3643,2871,762,962,757,34414],
     [14.23,1.31,21.13,10873,94964,2966,129748,59827,8519,38344,18495,3531,1369,544,2005,975,33855,],
 ];
+$.getJSON('/api/month_and_people?year1=2019&year2=2020', function(linedata) {
 
+});
 option = {
           
     baseOption: {
@@ -212,7 +214,6 @@ for(t=0;t<res.length;t++){
     res2[t]=res[t].value;
 }
 console.log(res1);
-console.log("----------------");
   console.log(jdData[n]);
     option.options.push({
         title: {
