@@ -10,7 +10,7 @@ li {
 
 @font-face {
     font-family: electronicFont;
-    src: url(../font/DS-DIGIT.TTF);
+    src: url(/static/font/DS-DIGIT.TTF);
 }
 
 body {
