@@ -53,6 +53,8 @@ def update_raw_database(database: str):
     loader = spark.read.format('jdbc')
 
     stories = loader.options(url='jdbc:sqlite:' + database, dbtable='stories', driver='org.sqlite.JDBC').load() \
+        .filter(functions.col('view_count') >= 1000) \
+        .filter(functions.col('like_count') != 0) \
         .withColumn('date_start', functions.split('date_start', r'/')) \
         .withColumn('date_start_y', functions.col('date_start')[0].cast('int')) \
         .withColumn('date_start_m', functions.col('date_start')[1].cast('int')) \
@@ -74,6 +76,7 @@ def update_raw_database(database: str):
         .collect()
 
     D.relp_avg_cost = stories.select('relp', 'cost', 'date_count') \
+        .filter(functions.col('cost') <= 100000) \
         .withColumn('cost', stories.cost / stories.date_count) \
         .select('relp', 'cost') \
         .groupBy('relp') \
