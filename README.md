@@ -325,15 +325,6 @@
     "error_code": 100,
     "data": [{
         "name": "洪崖洞",
-        "longitude": 12.34,
-        "latitude": 43.56,
-        "hot": 123,
-    }]
-}
-{
-    "error_code": 100,
-    "data": [{
-        "name": "洪崖洞",
         "value": [
                 121.57635,
                 31.118878999999996,
