@@ -34,7 +34,7 @@ provinces = ['四川',
 
 
 class D:
-    month_avg_people = None
+    month_and_people = None
 
     relp_avg_cost = None
 
@@ -66,22 +66,20 @@ def update_raw_database(database: str):
     visits = loader.options(url='jdbc:sqlite:' + database, dbtable='visits', driver='org.sqlite.JDBC').load()
     how_to = loader.options(url='jdbc:sqlite:' + database, dbtable='how_to', driver='org.sqlite.JDBC').load()
 
-    D.month_avg_people = stories.select('date_start_y', 'date_start_m') \
+    D.month_and_people = stories.select('date_start_y', 'date_start_m') \
         .groupBy('date_start_y', 'date_start_m') \
         .count() \
-        .groupBy('date_start_m') \
-        .avg('count') \
-        .withColumnRenamed('date_start_m', 'month') \
-        .withColumnRenamed('avg(count)', 'people_num') \
+        .orderBy(functions.col('date_start_m').asc()) \
         .collect()
 
     D.relp_avg_cost = stories.select('relp', 'cost', 'date_count') \
         .filter(functions.col('cost') <= 100000) \
         .withColumn('cost', stories.cost / stories.date_count) \
         .select('relp', 'cost') \
+        .filter(functions.col('relp').isNotNull()) \
         .groupBy('relp') \
         .avg('cost') \
-        .withColumnRenamed('avg(cost)', 'avg_cost') \
+        .withColumnRenamed('avg(cost)', 'relp_avg_cost') \
         .collect()
 
     D.relp_story_num = stories.select('relp') \
@@ -122,6 +120,7 @@ def update_raw_database(database: str):
         .avg('cost') \
         .withColumnRenamed('date_start_y', 'year') \
         .orderBy(functions.col('avg(cost)').desc()) \
+        .withColumn('avg(cost)', functions.bround(functions.col('avg(cost)'), scale=2)) \
         .collect()
 
     spark.stop()
