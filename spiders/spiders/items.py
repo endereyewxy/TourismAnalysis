@@ -51,7 +51,10 @@ class ScenicItem(scrapy_sqlitem.SqlItem, metaclass=scrapy_sqlitem.sqlitem.SqlAlc
     sqlmodel = sqlalchemy.Table('scenics', get_metadata(),
                                 sqlalchemy.Column(name='scid', type_=sqlalchemy.Integer),
                                 sqlalchemy.Column(name='name', type_=sqlalchemy.String),
-                                sqlalchemy.Column(name='city', type_=sqlalchemy.String))
+                                sqlalchemy.Column(name='city', type_=sqlalchemy.String),
+
+                                sqlalchemy.Column(name='lng', type_=sqlalchemy.Float),
+                                sqlalchemy.Column(name='lat', type_=sqlalchemy.Float))
 
 
 class VisitItem(scrapy_sqlitem.SqlItem, metaclass=scrapy_sqlitem.sqlitem.SqlAlchemyItemMeta):

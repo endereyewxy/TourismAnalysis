@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from typing import Optional
 
 import scrapy
@@ -103,32 +104,37 @@ class StorySpider(scrapy.Spider):
             tag_num = link.split("-")[1]
             tag = tag_num[0:2]
             num = tag_num[2:]
-            cb_kwargs = {'stid': stid, 'id_': int(num), 'name': name, 'index': index}
+            cb_kwargs = {'id_': int(num), 'name': name}
             if tag == 'cs':
+                visit = VisitItem()
+                visit['vstid'] = stid
+                visit['index'] = index
+                visit['vctid'] = int(num)
+                yield visit
                 if int(num) not in self.cs_set:
                     self.cs_set.add(int(num))
                     yield scrapy.Request(link, callback=self.find_prov, cb_kwargs=cb_kwargs)
             if tag == 'oi':
+                visit = VisitItem()
+                visit['vstid'] = stid
+                visit['index'] = index
+                visit['vscid'] = int(num)
+                yield visit
                 if int(num) not in self.oi_set:
                     self.oi_set.add(int(num))
                     yield scrapy.Request(link, callback=self.find_city, cb_kwargs=cb_kwargs)
             index += 1
 
     # noinspection PyMethodMayBeStatic
-    def find_prov(self, response, stid, id_, name, index):
+    def find_prov(self, response, id_, name):
         prov_name = response.xpath('//li[@class="item pull"]/a/@title')[-1].extract()
         city = CityItem()
         city['ctid'] = id_
         city['name'] = name
         city['prov'] = prov_name
         yield city
-        visit = VisitItem()
-        visit['vstid'] = stid
-        visit['index'] = index
-        visit['vctid'] = id_
-        yield visit
 
-    def find_city(self, response, stid, id_, name, index):
+    def find_city(self, response, id_, name):
         try:
             city_name = response.xpath('//li[@class="item pull"]/a/@title')[-1].extract()
             city_id = int(response.xpath('//li[@class="item pull"]/a/@href')[-1].extract().split("-")[1][2:])
@@ -140,15 +146,14 @@ class StorySpider(scrapy.Spider):
                 city['name'] = city_name
                 city['prov'] = prov_name
                 yield city
+            location = re.search(r'latlng="([-\d.,]+)"', response.text).group(1).split(',')
+            lng, lat = location[1], location[0]
             scenic = ScenicItem()
             scenic['scid'] = id_
             scenic['name'] = name
             scenic['city'] = city_id
+            scenic['lng'] = lng
+            scenic['lat'] = lat
             yield scenic
-            visit = VisitItem()
-            visit['vstid'] = stid
-            visit['index'] = index
-            visit['vscid'] = id_
-            yield visit
         except IndexError:
             pass
