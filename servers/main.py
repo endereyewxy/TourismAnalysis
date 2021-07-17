@@ -4,8 +4,11 @@ from data import update_raw_database, D
 
 app = flask.Flask('tourism-analysis')
 
-update_raw_database('data.db.050')
+update_raw_database('loct.db.050')
 
+@app.route('/')
+def root():
+    return flask.redirect('/lines3d.html')
 
 @app.route('/<htm>.html')
 def handle_htm(htm: str):

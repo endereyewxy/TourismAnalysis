@@ -30,7 +30,10 @@ provinces = ['四川',
              '海南',
              '青海',
              '宁夏',
-             '西藏']
+             '西藏',
+             '香港',
+             '澳门',
+             '台湾']
 
 
 class D:
@@ -43,6 +46,8 @@ class D:
     play_way_percent_topn = None
 
     prov_hot = None
+
+    spot_hot = None
 
     city_everypeolple_avg_cost = None
 
@@ -61,10 +66,21 @@ def update_raw_database(database: str):
         .withColumn('date_start_y', functions.col('date_start')[0].cast('int')) \
         .withColumn('date_start_m', functions.col('date_start')[1].cast('int')) \
         .withColumn('date_start_d', functions.col('date_start')[2].cast('int')) \
-        .withColumn('hot', functions.col('date_count') * functions.col('text_count'))
+        .withColumn('hot',
+                    1 * functions.col('view_count') +
+                    5 * functions.col('like_count') +
+                    9 * functions.col('cmmt_count') +
+                    2 * functions.col('pict_count'))
     scenics = loader.options(url='jdbc:sqlite:' + database, dbtable='scenics', driver='org.sqlite.JDBC').load()
 
-    cities = loader.options(url='jdbc:sqlite:' + database, dbtable='cities', driver='org.sqlite.JDBC').load()
+    cities = loader.options(url='jdbc:sqlite:' + database, dbtable='cities', driver='org.sqlite.JDBC').load() \
+        .withColumn('prov', functions \
+                    .when(functions.col('name') == '北京', '北京') \
+                    .when(functions.col('name') == '天津', '天津') \
+                    .when(functions.col('name') == '重庆', '重庆') \
+                    .when(functions.col('name') == '上海', '上海') \
+                    .when(functions.col('name') == '香港', '香港') \
+                    .when(functions.col('name') == '澳门', '澳门').otherwise(functions.col('prov')))
     visits = loader.options(url='jdbc:sqlite:' + database, dbtable='visits', driver='org.sqlite.JDBC').load()
     how_to = loader.options(url='jdbc:sqlite:' + database, dbtable='how_to', driver='org.sqlite.JDBC').load()
 
@@ -87,6 +103,7 @@ def update_raw_database(database: str):
     D.relp_story_num = stories.select('relp') \
         .groupBy('relp') \
         .count() \
+        .withColumn('relp', functions.when(functions.col('relp').isNull(), '其他').otherwise(functions.col('relp'))) \
         .withColumnRenamed('relp', 'name') \
         .withColumnRenamed('count', 'value') \
         .collect()
@@ -100,16 +117,31 @@ def update_raw_database(database: str):
         .orderBy(functions.col('percent').desc()) \
         .collect()
 
-    D.prov_hot = stories.select('date_start_y', 'loct', 'hot') \
+    D.prov_hot = visits.select('vstid', 'vctid') \
+        .filter(functions.col('vctid').isNotNull()) \
+        .join(stories, functions.col('vstid') == stories.stid, 'left') \
+        .select('vctid', 'hot', 'date_start_y') \
         .filter(2019 <= functions.col('date_start_y')) \
         .filter(2021 >= functions.col('date_start_y')) \
-        .join(cities, functions.col('loct') == cities.name) \
-        .select('date_start_y', 'hot', 'prov') \
+        .join(cities, functions.col('vctid') == cities.ctid, 'left') \
+        .select('prov', 'hot', 'date_start_y') \
         .filter(functions.col('prov').isin(provinces)) \
         .groupBy('date_start_y', 'prov') \
         .sum('hot') \
         .withColumnRenamed('date_start_y', 'year') \
         .withColumnRenamed('sum(hot)', 'hot') \
+        .collect()
+
+    D.spot_hot = visits.select('vstid', 'vscid') \
+        .filter(functions.col('vscid').isNotNull()) \
+        .join(stories, functions.col('vstid') == stories.stid, 'left') \
+        .select('vscid', 'hot') \
+        .join(scenics, functions.col('vscid') == scenics.scid, 'left') \
+        .select('name', 'hot', 'lng', 'lat') \
+        .groupBy('name', 'lng', 'lat') \
+        .sum('hot') \
+        .withColumnRenamed('sum(hot)', 'hot') \
+        .limit(20) \
         .collect()
 
     D.city_everypeolple_avg_cost = stories.select('date_start_y', 'loct', 'cost') \
