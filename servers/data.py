@@ -60,7 +60,7 @@ def update_raw_database(database: str):
     loader = spark.read.format('jdbc')
 
     stories = loader.options(url='jdbc:sqlite:' + database, dbtable='stories', driver='org.sqlite.JDBC').load() \
-        .filter(functions.col('view_count') >= 1000) \
+        .filter(functions.col('view_count') >= 50) \
         .filter(functions.col('like_count') != 0) \
         .withColumn('date_start', functions.split('date_start', r'/')) \
         .withColumn('date_start_y', functions.col('date_start')[0].cast('int')) \
@@ -137,12 +137,26 @@ def update_raw_database(database: str):
         .join(stories, functions.col('vstid') == stories.stid, 'left') \
         .select('vscid', 'hot') \
         .join(scenics, functions.col('vscid') == scenics.scid, 'left') \
-        .select('name', 'hot', 'lng', 'lat') \
-        .groupBy('name', 'lng', 'lat') \
+        .select('city', 'name', 'hot', 'lng', 'lat') \
+        .filter(functions.col('lng') != 0) \
+        .filter(functions.col('lat') != 0) \
+        .groupBy('city', 'name', 'lng', 'lat') \
         .sum('hot') \
         .withColumnRenamed('sum(hot)', 'hot') \
-        .limit(20) \
+        .filter(functions.col('hot').isNotNull()) \
+        .withColumnRenamed('name', 'sName') \
+        .join(cities, functions.col('city') == cities.ctid) \
+        .select('prov', 'sName', 'hot', 'lng', 'lat') \
+        .filter(functions.col('prov').isin(provinces)) \
         .collect()
+    new_dict = {}
+    hot_dict = {}
+    for obj in map(lambda x: x.asDict(), D.spot_hot):
+        new_dict.setdefault(obj['prov'], []).append({'name': obj['sName'], 'value': [
+            obj['lng'], obj['lat'], obj['hot']
+        ]})
+        hot_dict[obj['prov']] = max(obj['hot'], hot_dict.get(obj['prov'], 0))
+    D.spot_hot = {prov: (value, hot_dict[prov]) for prov, value in new_dict.items()}
 
     D.city_everypeolple_avg_cost = stories.select('date_start_y', 'loct', 'cost') \
         .filter(2019 <= functions.col('date_start_y')) \

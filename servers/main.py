@@ -6,9 +6,11 @@ app = flask.Flask('tourism-analysis')
 
 update_raw_database('loct.db.050')
 
+
 @app.route('/')
 def root():
     return flask.redirect('/lines3d.html')
+
 
 @app.route('/<htm>.html')
 def handle_htm(htm: str):
@@ -18,6 +20,9 @@ def handle_htm(htm: str):
 @app.route('/api/<api>')
 def handle_api(api: str):
     try:
+        if api == 'spot_hot':
+            prov = flask.request.args.get('prov', '')
+            return {'code': 100, 'data': D.spot_hot[prov][0], 'max_hot': D.spot_hot[prov][1]}
         data = [row.asDict() for row in getattr(D, api)]
         if api == 'month_and_people':
             year1 = int(flask.request.args.get('year1', ''))
