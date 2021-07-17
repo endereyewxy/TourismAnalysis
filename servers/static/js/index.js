@@ -7,7 +7,8 @@ $.getJSON('/api/relp_avg_cost', function(bardata) {
   var titlename = [];
   for (var key in bardata.data) {
     titlename.push(bardata.data[key].relp);
-    data.push(bardata.data[key].relp_avg_cost);
+    num = Math.floor(bardata.data[key].relp_avg_cost * 100) / 100
+    data.push(num);
   }
 
       // 指定配置和数据
@@ -15,6 +16,7 @@ $.getJSON('/api/relp_avg_cost', function(bardata) {
     color: ["#2f89cf"],
     tooltip: {
       trigger: "axis",
+      formatter: '{a0}:{c0}元',
       axisPointer: {
         // 坐标轴指示器，坐标轴触发有效
         type: "shadow" // 默认为直线，可选为：'line' | 'shadow'
@@ -22,7 +24,7 @@ $.getJSON('/api/relp_avg_cost', function(bardata) {
     },
     grid: {
       left: "0%",
-      top: "10px",
+      top: "30px",
       right: "0%",
       bottom: "4%",
       containLabel: true
@@ -37,7 +39,7 @@ $.getJSON('/api/relp_avg_cost', function(bardata) {
         axisLabel: {
           textStyle: {
             color: "rgba(255,255,255,.6)",
-            fontSize: "9"
+            fontSize: "13"
           }
         },
         axisLine: {
@@ -48,6 +50,11 @@ $.getJSON('/api/relp_avg_cost', function(bardata) {
     yAxis: [
       {
         type: "value",
+        name: "元",
+        nameLocation : 'end',
+        nameTextStyle: {
+          color: "rgba(255,255,255,.6)"
+        },
         axisLabel: {
           textStyle: {
             color: "rgba(255,255,255,.6)",
@@ -124,7 +131,7 @@ $.getJSON('/api/relp_avg_cost', function(bardata) {
               axisLabel: {
                 textStyle: {
                   color: "rgba(255,255,255,.6)",
-                  fontSize: "12"
+                  fontSize: "13"
                 }
               },
           }
@@ -132,6 +139,12 @@ $.getJSON('/api/relp_avg_cost', function(bardata) {
       yAxis: [
         {
           type: "value",
+          name: "篇",
+          nameLocation : 'end',
+          interval: 2000,
+          nameTextStyle: {
+            color: "rgba(255,255,255,.6)"
+          },
           axisLabel: {
             textStyle: {
               color: "rgba(255,255,255,.6)",
@@ -497,6 +510,11 @@ $.getJSON('/api/relp_avg_cost', function(bardata) {
       yAxis: [
         {
           type: "value",
+          name: "篇",
+          nameLocation : 'end',
+          nameTextStyle: {
+            color: "rgba(255,255,255,.6)"
+          },
           axisTick: { show: false },
           axisLine: {
             lineStyle: {

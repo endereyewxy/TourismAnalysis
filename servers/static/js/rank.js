@@ -87,6 +87,7 @@ $.getJSON('/api/city_everypeolple_avg_cost', function(bardata) {
             },
             tooltip: {
                 'trigger': 'axis',
+                formatter: '{b}:{c}元',
             },
             calculable: true,
             grid: {
@@ -179,7 +180,7 @@ $.getJSON('/api/city_everypeolple_avg_cost', function(bardata) {
                         show: true,
                         position: 'inside',
                         fontSize: '25',
-                        formatter: '{c}'
+                        formatter: '{c}元'
                     }
                 },
                 itemStyle: {

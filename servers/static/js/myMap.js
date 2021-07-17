@@ -135,10 +135,15 @@
       // 鼠标放置显示小窗
         baseOption: {
             tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                },
+                "trigger": "item",
+                "confine": true,
+                "formatter": (p)=>{
+                  // console.log(JSON.stringify(p));
+                  let dataCon = p.data,
+                      txtCon = `${dataCon.name}</br>热度：${dataCon.value}`
+                  return txtCon
+    
+                }
             },
              
               geo: {
@@ -194,20 +199,22 @@
                     console.log(n);
                     return val[2] / scatterdata.data[n].max *30;
                 }}(n),
-                label: {
-                    normal: {
-                        formatter: '{b}',
-                        position: 'right',
-                        show: true
-                    },
-                    emphasis: {
-                        show: true
-                    }
-                },
+                // label: {
+                //     normal: {
+                //         formatter: '{b}',
+                //         position: 'right',
+                //         show: true
+                //     },
+                //     emphasis: {
+                //         show: true
+                //     }
+                // },
                 itemStyle: {
                     normal: {
-                        color: '#fff'
-                    }
+                        color: '#fff',
+                        opacity: 0,
+                    },
+                    
                 }
             },
             {

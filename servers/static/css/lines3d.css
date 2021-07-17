@@ -22,7 +22,7 @@ body {
 
 #container {
     display: grid;
-    grid-template-columns:  50% 50%;
+    grid-template-columns:  50% 45%;
     grid-template-rows:   33.3%  33.3%  33.3%;
     justify-content: center;
     align-content: center;
@@ -62,7 +62,7 @@ body {
     line-height: 0.6rem;
     text-align: center;
     color: rgb(177, 188, 235);
-    /*font-size: 4rem;*/
+    font-size: 70px;
     font-weight: 400;
     font-family: electronicFont, serif;
     text-decoration: none;
@@ -71,7 +71,7 @@ body {
 .panel p {
     padding-top: 50px;
     margin: 0 0.1875rem;
-    /*font-size: 2rem;*/
+    font-size: 30px;
     text-align: center;
     color: rgb(168, 192, 235);
     font-family: electronicFont, serif;

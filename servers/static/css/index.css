@@ -78,6 +78,7 @@ header .showTime {
     color: #fff;
     font-size: 0.25rem;
     font-weight: 400;
+    font-family: electronicFont, serif;
 }
 
 .panel h2 a {

@@ -35,9 +35,19 @@ $.getJSON('/static/data/flights.json', function(data) {
                 }
             },
 
-            viewControl: {
-                autoRotate: true
-            }
+            viewControl:{
+                autoRotate: true,
+                projection: 'orthographic',
+                orthographicSize: 160, //控制地图大小
+                maxOrthographicSize: 160,
+                minOrthographicSize: 160,
+                animation:true,
+                // alpha:60,
+                // beta:10,
+                animationDurationUpdate:10
+
+                // autoRotateSpeed:5
+              },
         },
         series: {
 
