@@ -17,6 +17,11 @@ def handle_htm(htm: str):
     return flask.render_template(htm.lstrip('/') + '.html')
 
 
+@app.errorhandler(404)
+def handle_404(_):
+    return flask.render_template('404.html'), 404
+
+
 @app.route('/api/<api>')
 def handle_api(api: str):
     try:
