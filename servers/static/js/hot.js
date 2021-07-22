@@ -5,6 +5,7 @@ var t_pos = {
     top: 0
 }
 myChart.showLoading();
+
 myChart.setOption(option = {
     tooltip: {
         show: "false",
@@ -47,7 +48,7 @@ myChart.setOption(option = {
     },
     animation: false,
     bmap: {
-        roam: true,
+        roam: 'move',
         mapStyle: {
             'styleJson': [{
                 "featureType": "water",
@@ -65,7 +66,7 @@ myChart.setOption(option = {
                 "featureType": "highway",
                 "elementType": "geometry.stroke",
                 "stylers": {
-                    "color": "#147a92"
+                    "color": "#000000"
                 }
             }, {
                 "featureType": "arterial",
@@ -77,7 +78,7 @@ myChart.setOption(option = {
                 "featureType": "arterial",
                 "elementType": "geometry.stroke",
                 "stylers": {
-                    "color": "#0b3d51"
+                    "color": "#000000"
                 }
             }, {
                 "featureType": "local",
@@ -101,7 +102,7 @@ myChart.setOption(option = {
                 "featureType": "railway",
                 "elementType": "geometry.stroke",
                 "stylers": {
-                    "color": "#08304b"
+                    "color": "#000000"
                 }
             }, {
                 "featureType": "building",
@@ -168,7 +169,7 @@ myChart.setOption(option = {
     series: [{
         type: 'heatmap',
         coordinateSystem: 'bmap',
-        pointSize: 7,
+        pointSize: 10,
         blurSize: 10,
         label: {
             normal: {
@@ -178,11 +179,25 @@ myChart.setOption(option = {
                 show: false
             }
         },
-    }
-    ]
+    }]
 });
+
 const prov = new URLSearchParams(window.location.search).get('prov');
 myChart.getModel().getComponent('bmap').getBMap().centerAndZoom(prov);
+// myChart.getModel().getComponent('bmap').getBMap().addEventListener('zoomend', function () {
+//     var lvl = [10000000, 5000000, 2000000, 1000000, 500000, 200000, 100000, 50000, 25000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20]
+//         [myChart.getModel().getComponent('bmap').getBMap().getZoom() - 1]
+//     var timer = setTimeout(function () {
+//         clearTimeout(timer);
+//         console.log(lvl)
+//         myChart.setOption({
+//             series: [{
+//                 pointSize: 2000000 / lvl,
+//                 blurSize: 2000000 / lvl,
+//             }]
+//         });
+//     }, 1);
+// });
 $.getJSON('/api/spot_hot?prov=' + prov, function (linedata) {
     myChart.hideLoading();
     myChart.setOption({

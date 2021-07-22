@@ -16,25 +16,6 @@
 
     });
 
-    // for (var key in geoCoordMap) {
-    //     console.log(key);
-    //     mapData[0].push({
-    //         "year": '2019',
-    //         "name": key,
-    //         "value": randomNum(0, 200)
-    //     });
-    //     mapData[1].push({
-    //         "year": '2020',
-    //         "name": key,
-    //         "value": randomNum(0, 200)
-    //     });
-    //     mapData[2].push({
-    //         "year": '2021',
-    //         "name": key,
-    //         "value": randomNum(0, 200)
-    //     });
-    // }
-
     $.getJSON('/api/prov_hot', function (scatterdata) {
         var year = ["2019", "2020", "2021"];
         var mapData = [
