@@ -117,14 +117,14 @@
             baseOption: {
                 tooltip: {
                     "trigger": "item",
-                    "confine": true,
-                    "formatter": (p) => {
-                        // console.log(JSON.stringify(p));
-                        let dataCon = p.data,
-                            txtCon = `${dataCon.name}</br>热度：${dataCon.value}`
-                        return txtCon
+                    // "confine": true,
+                    // "formatter": (p) => {
+                    //     // console.log(JSON.stringify(p));
+                    //     let dataCon = p.data,
+                    //         txtCon = `${dataCon.name}</br>热度：${dataCon.value}`
+                    //     return txtCon
 
-                    }
+                    // }
                 },
 
                 geo: {
@@ -198,7 +198,18 @@
                                 opacity: 0,
                             },
 
-                        }
+                        },
+                        tooltip: {
+                            "trigger": "item",
+                            "confine": true,
+                            "formatter": (p) => {
+                                // console.log(JSON.stringify(p));
+                                let dataCon = p.data,
+                                    txtCon = `${dataCon.name}</br>热度：${dataCon.value[2]}`
+                                return txtCon
+        
+                            }
+                        },
                     },
                     {
                         type: 'map',
@@ -228,7 +239,18 @@
                             }
                         },
                         animation: false,
-                        data: mapData[n]
+                        data: mapData[n],
+                        tooltip: {
+                            "trigger": "item",
+                            "confine": true,
+                            "formatter": (p) => {
+                                // console.log(JSON.stringify(p));
+                                let dataCon = p.data,
+                                    txtCon = `${dataCon.name}</br>热度：${dataCon.value}`
+                                return txtCon
+        
+                            }
+                        },
                     },
                     {
                         name: '点',
@@ -268,7 +290,18 @@
                                 shadowColor: 'yellow'
                             }
                         },
-                        zlevel: 1
+                        zlevel: 1,
+                        tooltip: {
+                            "trigger": "item",
+                            "confine": true,
+                            "formatter": (p) => {
+                                // console.log(JSON.stringify(p));
+                                let dataCon = p.data,
+                                    txtCon = `${dataCon.name}</br>热度：${dataCon.value[2]}`
+                                return txtCon
+        
+                            }
+                        },
                     },
                 ]
             })

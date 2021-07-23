@@ -21,8 +21,8 @@ $.getJSON('/static/data/flights.json', function(data) {
     myChart.setOption({
         backgroundColor: '#000',
         globe: {
-            baseTexture:  '/static/images/world.topo.bathy.200401.jpg',
-            heightTexture: '/static/images/bathymetry_bw_composite_4k.jpg',
+            baseTexture:  '/static/images/min_world.topo.bathy.jpg',
+            heightTexture: '/static/images/bathymetry_bw_composite.jpg',
             globeRadius: 80,
             shading: 'lambert',
 
