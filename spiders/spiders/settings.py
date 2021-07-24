@@ -21,7 +21,7 @@ LOG_LEVEL = 'INFO'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 64
+CONCURRENT_REQUESTS = 128
 
 RETRY_ENABLED = False
 
@@ -65,9 +65,9 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-    'spiders.pipelines.SpidersPipeline': 300,
-}
+# ITEM_PIPELINES = {
+#     'spiders.pipelines.SpidersPipeline': 300,
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -94,4 +94,5 @@ ITEM_PIPELINES = {
 FEED_EXPROT_ENCODING = 'UTF-8'
 SQLITE_DB_NAME = 'data.db'
 
-PROXY_URL = ''
+PROXY_URL = 'https://proxyapi.horocn.com/api/v2/proxies?order_id=RBGW1705247445165735&num=10&format=json&can_repeat=no' \
+            '&user_token=9b6410a95c4e033166f852a5ad2b84ea'

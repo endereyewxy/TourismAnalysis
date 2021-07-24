@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <title>人均消费排行榜</title>
+    <link rel="stylesheet" href="/static/css/rank.css"/>
+</head>
+
+<body>
+<header>
+    <h1><span style="font-size:25px;cursor:pointer" onclick="openNav()">&#9776;</span>
+        省份-人均消费</h1>
+</header>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="lines3d.html">首页</a>
+    <a href="index.html">旅游数据分析</a>
+    <a href="hot.html?prov=北京">热门景点</a>
+    <a href="rank.html">人均消费排行榜</a>
+</div>
+
+
+<div id="container">
+    <div class="map">
+        <div class="chart" style="width: 80vw;height:9rem;"></div>
+    </div>
+</div>
+
+<script src="/static/js/flexible.js"></script>
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/echarts.min.js"></script>
+<script src="/static/js/china.js"></script>
+<script src="/static/js/rank.js"></script>
+<script src="/static/js/t.js"></script>
+</body>
+</html>
