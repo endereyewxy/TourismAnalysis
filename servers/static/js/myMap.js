@@ -207,7 +207,7 @@
                                 let dataCon = p.data,
                                     txtCon = `${dataCon.name}</br>热度：${dataCon.value[2]}`
                                 return txtCon
-        
+
                             }
                         },
                     },
@@ -248,7 +248,7 @@
                                 let dataCon = p.data,
                                     txtCon = `${dataCon.name}</br>热度：${dataCon.value}`
                                 return txtCon
-        
+
                             }
                         },
                     },
@@ -299,7 +299,7 @@
                                 let dataCon = p.data,
                                     txtCon = `${dataCon.name}</br>热度：${dataCon.value[2]}`
                                 return txtCon
-        
+
                             }
                         },
                     },
@@ -313,7 +313,7 @@
         myChart.resize();
     });
     myChart.on('click', function (data) {
-        if (data.hasOwnProperty('name')) {
+        if (data.hasOwnProperty('name') && data.name.len() < 4) {
             window.location.href = '/hot.html?prov=' + data.name;
         }
     });
