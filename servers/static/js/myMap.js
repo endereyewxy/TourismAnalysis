@@ -313,8 +313,8 @@
         myChart.resize();
     });
     myChart.on('click', function (data) {
-        if (data.hasOwnProperty('name') && data.name.len() < 4) {
-            window.location.href = '/hot.html?prov=' + data.name;
+        if (data.hasOwnProperty('name')) {
+            data.name.length < 4 && (window.location.href = '/hot.html?prov=' + data.name);
         }
     });
 })();
